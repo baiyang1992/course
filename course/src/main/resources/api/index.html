@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>RESTful接口测试</title>
+<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+	font-family: consolas, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+		"Hiragino Sans GB", "WenQuanYi Micro Hei", "Microsoft Yahei",
+		sans-serif;
+	font-size: 13px;
+}
+
+body, html, .wraper {
+	width: 100%;
+	height: 100%;
+}
+::-webkit-scrollbar-track-piece {
+	background-color: transparent;
+}
+
+::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	height: 50px;
+	background-color: #999;
+	-webkit-border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	height: 50px;
+	background-color: #9f9f9f;
+	-webkit-border-radius: 4px;
+}
+.left-side {
+	float: left;
+	width: 300px;
+	background: #343A55;
+	height: 100%;
+	padding-top: 40px;
+	padding-bottom: 40px;
+	box-sizing: border-box;
+	color: #CCCCCC;
+	overflow:auto;
+}
+
+.api {
+	line-height: 35px;
+	padding-left: 20px;
+	cursor: pointer;
+	transition: all 200ms ease-in-out;
+}
+
+.api:hover {
+	color: #ffffff;
+	background: #444A65;
+	padding-left: 25px;
+}
+
+.api.active {
+	color: #ffffff;
+	background: #444A65;
+}
+
+.right-side {
+	width: calc(100% - 300px);
+	float: left;
+	height: 100%;
+}
+
+.api-doc {
+	padding: 40px;
+	overflow: auto;
+	width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.api-item {
+	margin: 20px 0;
+	line-height: 30px;
+}
+
+.api-item:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden
+}
+
+.api-item .item-name, .api-item .item-value {
+	display: inline-block;
+	float: left;
+}
+
+.api-item .item-name {
+	color: #999999;
+}
+
+.api-item .item-value {
+	font-style: italic;
+	margin-left: 30px;
+}
+
+.param-input {
+	border: none;
+	width: 300px;
+	border-bottom: 1px solid #000000;
+	outline: none;
+	margin-left: 50px;
+	padding: 0 20px;
+}
+
+.send-btn {
+	background: #58C189;
+	border: none;
+	color: #ffffff;
+	padding: 8px 15px;
+	font-size: 12px;
+	border-radius: 3px;
+	outline: none;
+	cursor: pointer;
+}
+
+#result {
+	background: #343A55;
+	width: calc(100%);
+	padding: 0 10px;
+	box-sizing: border-box;
+	border-radius: 5px;
+	color: #ffffff;
+	line-height: 25px;
+}
+</style>
+</head>
+
+<body>
+	<div class="wraper">
+		<div class="left-side"></div>
+		<div class="right-side">
+			<div class="api-doc"></div>
+		</div>
+	</div>
+</body>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script>
+	$(function() {
+		loadList();
+	})
+	var apis;
+	function loadList() {
+		$.post("/course/api/list", function(data) {
+			for (var n = 0; n <data.NODE.length; n++){
+				//alert(data.NODE[i]);
+				for (var i = 0; i < data.APIS.length; i++) {
+					if(data.NODE[n]==data.APIS[i].node){
+						$(".left-side").append('<div class="api" data-id="'+i+'">' + (n + 1) + '.' + data.APIS[i].description + '</div>')
+					}
+				}
+			}
+
+			apis = data.APIS;
+			$(".left-side .api").click(function() {
+				painApi(apis[$(this).attr("data-id")]);
+			});
+		});
+	}
+
+	function painApi(api) {
+		console.log(api);
+		$(".api-doc").empty();
+		$(".api-doc").append('<div class="api-item"> <div class="item-name">接口名称:</div> <div class="item-value">' + api.description + '</div> </div>');
+		$(".api-doc").append('<div class="api-item"> <div class="item-name">接口地址:</div> <div class="item-value r-url">' + api.url + '</div> </div>');
+		$(".api-doc").append('<div class="api-item"> <div class="item-name">请求方式:</div> <div class="item-value r-type">' + api.method + '</div> </div>');
+		var params = '';
+		if (api.params && api.params.length > 0) {
+			params = '<div class="param"> <span class="param-name">' + api.params.join('</span> <input type="text" class="param-input" /> </div><div class="param"> <span class="param-name">') + '</span> <input type="text" class="param-input" /> </div>';
+		}
+		$(".api-doc").append('<div class="api-item"> <div class="item-name">请求参数:</div> <div class="item-value"> ' + params + '</div> </div>');
+		$(".api-doc").append('<div class="api-item"> <button class="send-btn">发送</button> </div>');
+		$(".api-doc").append('<div class="api-item"> <div class="item-name">响应结果:</div> <pre class="item-value" id="result"></pre> </div>');
+		$(".send-btn").click(function() {
+			var url = $(".r-url").text().trim();
+			var type = $(".r-type").text().trim();
+			if (type != "GET") {
+				type = "POST";
+			}
+			var param = {};
+			$(".param").each(function() {
+				var name = $(this).find(".param-name").text().trim();
+				var value = $(this).find(".param-input").val();
+				var parseResult=parseInt(value);
+				if(isNaN(parseResult)){
+					param[name] = value;
+				}else {
+					param[name] = parseResult;
+				}
+
+			})
+			var val = param;
+			if(type == "POST"){
+				val = JSON.stringify(param);
+			}
+			$.ajax(url, {
+				type : type,
+				contentType: "application/json",
+				data : val,
+				success : function(data) {
+					$("#result").text(JSON.stringify(data, null, "\t"));
+				}
+			});
+		});
+	}
+</script>
+
+</html>
