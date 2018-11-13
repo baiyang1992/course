@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://106.15.179.225:3306/share?useSSL=false&amp;characterEncoding=utf8&amp;jdbcCompliantTruncation=false&amp;zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://106.15.179.225:3306/share?useSSL=false&amp
     username: share
     password: share_by
 
