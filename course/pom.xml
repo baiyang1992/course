@@ -64,6 +64,27 @@
 
 	</dependencies>
 
+	<!--<build>
+		<plugins>
+			<plugin>
+				<groupId>org.mybatis.generator</groupId>
+				<artifactId>mybatis-generator-maven-plugin</artifactId>
+				<version>1.3.2</version>
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.1.44</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>-->
+
 	<build>
 		<plugins>
 			<plugin>
@@ -83,17 +104,19 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<!--<resources>-->
-			<!--<resource>-->
-				<!--<directory>src/main/resources</directory>-->
-				<!--<includes>-->
-					<!--<include>**/*.properties</include>-->
-					<!--<include>**/*.xml</include>-->
-				<!--</includes>-->
-				<!--<filtering>false</filtering>-->
-			<!--</resource>-->
-		<!--</resources>-->
-
+		<resources>
+			<!--<resource>
+				<directory>${project.basedir}/libs</directory>
+				<targetPath>BOOT-INF/lib/</targetPath>
+				<includes>
+					<include>**/*.jar</include>
+				</includes>
+			</resource>-->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
 
 

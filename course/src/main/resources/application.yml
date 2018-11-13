@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: 8091
   servlet:
     context-path: /course
 
@@ -11,5 +11,5 @@ spring:
     password: share_by
 
 mybatis:
-  mapper-locations: classpath:mybatis/mapper/*.xml
+  mapper-locations: classpath:mybatis/UserMapper.xml
   type-aliases-package: com.course.model
