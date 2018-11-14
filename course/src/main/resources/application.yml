@@ -11,5 +11,6 @@ spring:
     password: share_by
 
 mybatis:
-  mapper-locations: classpath:mybatis/UserMapper.xml
+#  mapper-locations: classpath:mybatis/UserMapper.xml
+  mapper-locations: classpath:mybatis/*.xml
   type-aliases-package: com.course.model
