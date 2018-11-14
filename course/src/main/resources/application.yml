@@ -13,4 +13,4 @@ spring:
 mybatis:
 #  mapper-locations: classpath:mybatis/UserMapper.xml
   mapper-locations: classpath:mybatis/mapper/*.xml
-  type-aliases-package: com.course.model
+  type-aliases-package: com.course.model 
